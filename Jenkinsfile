@@ -2,14 +2,30 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Clone') {
             steps {
-                echo 'Building...'
+                echo 'Cloning code from GitHub...'
             }
         }
+
+        stage('Build') {
+            steps {
+                echo 'Building application...'
+                sh 'echo Compiling project...'
+            }
+        }
+
         stage('Test') {
             steps {
-                echo 'Testing...'
+                echo 'Running tests...'
+                sh 'echo Test cases executed successfully'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                sh 'echo Application deployed locally'
             }
         }
     }
