@@ -1,23 +1,14 @@
-pipeline {
-    agent any
+stage('Deploy') {
+    steps {
+        sh '''
+        rm -rf site
+        mkdir site
+        cp index.html site/
 
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building application...'
-            }
-        }
+        docker stop devops-app || true
+        docker rm devops-app || true
 
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-            }
-        }
+        docker run -d -p 8082:80 -v $(pwd)/site:/usr/share/nginx/html:ro --name devops-app nginx
+        '''
     }
 }
