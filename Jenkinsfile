@@ -7,11 +7,8 @@ pipeline {
                 sshagent(['ec2-key']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@54.234.215.60 "
-                    CONTAINER_ID=\$(docker ps -q)
-                    if [ ! -z \"\$CONTAINER_ID\" ]; then
-                        docker stop \$CONTAINER_ID
-                        docker rm \$CONTAINER_ID
-                    fi
+                    docker stop \$(docker ps -aq) 2>/dev/null || true
+                    docker rm \$(docker ps -aq) 2>/dev/null || true
                     docker run -d -p 80:80 -v /home/ubuntu/app:/usr/share/nginx/html nginx
                     "
                     '''
