@@ -1,14 +1,19 @@
-stage('Deploy') {
-    steps {
-        sh '''
-        rm -rf site
-        mkdir site
-        cp index.html site/
+pipeline {
+    agent any
 
-        docker stop devops-app || true
-        docker rm devops-app || true
-
-        docker run -d -p 8082:80 -v $(pwd)/site:/usr/share/nginx/html:ro --name devops-app nginx
-        '''
+    stages {
+        stage('Deploy') {
+            steps {
+                sshagent(['ec2-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@54.234.215.60 "
+                    docker stop \$(docker ps -q) || true
+                    docker rm \$(docker ps -aq) || true
+                    docker run -d -p 80:80 -v /home/ubuntu/app:/usr/share/nginx/html nginx
+                    "
+                    '''
+                }
+            }
+        }
     }
 }
